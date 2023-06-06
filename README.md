@@ -16,7 +16,7 @@ The Grading System project is designed to automate the process of grading and ma
 - Assignment creation and management
 - Import/export functionality for student data
 - Student submission and assessment tracking
-# Incoming Features
+### Incoming Features
 - Customizable grading criteria
 - Detailed grading reports
 - Automated grading functionality 
