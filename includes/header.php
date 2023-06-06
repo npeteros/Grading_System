@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/styles.css">    
 </head>
 <body>
+    <?php include('includes/functions.php'); ?>
     <div class="main_menu">
             <fieldset>
                 <legend>Current Activity</legend>

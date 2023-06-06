@@ -4,13 +4,14 @@
 
         $group = $_POST['group'];
         $course = $_POST['course'];
-        $schedule = $_POST['schedule'];
-
-        $query = "INSERT INTO classes (groupNumber, courseCode, classSchedule) VALUES($group, '$course', '$schedule')";
-        if(mysqli_query($dbc, $query)) echo "Class ID " . mysqli_insert_id($dbc) . " successfully inserted!";
+        $s_time = $_POST['s_time'];
+        $e_time = $_POST['e_time'];
+        $sched = $_POST['sched'];
+        $room = $_POST['room'];
+        $campus = $_POST['campus'];
         
-        $query = "UPDATE global SET totalClasses = totalClasses + 1 WHERE unique_key = 1";
-        mysqli_query($dbc, $query);
+        $query = "INSERT INTO classes (groupNumber, courseCode, s_time, e_time, schedID, roomID, campusID) VALUES($group, '$course', '$s_time', '$e_time', $sched, $room, $campus)";
+        if(mysqli_query($dbc, $query)) echo "Class ID " . mysqli_insert_id($dbc) . " successfully inserted!";
         
         mysqli_close($dbc);
     }

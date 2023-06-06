@@ -1,6 +1,6 @@
 <?php 
     include('includes/header.php');
-    if(!isset($_GET['id'])) header("Location: index.php"); 
+    if(!isset($_GET['id']) || !isValidClassID($_GET['id'])) header("Location: index.php"); 
     $id = $_GET['id'];
     include('includes/mysqli_connect.php');
 ?>
@@ -32,7 +32,6 @@
                 </thead>
                 <tbody>
                     <?php
-                        include('includes/mysqli_connect.php');
                         
                         $query = "SELECT * FROM students WHERE studentClass = $id";
                         if($r = mysqli_query($dbc, $query)) {
@@ -40,7 +39,7 @@
                                 echo "<tr>
                                     <td>" . $row['studentID'] . "</td>
                                     <td>" . $row['studentName'] . "</td>
-                                    <td>" . $row['studentCourse'] . "</td>
+                                    <td>" . getCourse($row['courseID']) . "</td>
                                     <td><input type='button' value='View Student' class='action viewStudent' id='viewStudent' aria-label='" . $row['studentID'] . "'></td>
                                 </tr>";
                             }

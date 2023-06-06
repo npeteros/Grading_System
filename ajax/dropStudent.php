@@ -5,13 +5,10 @@
         $classID = $_POST['classID'];
         $studentID = $_POST['studentID'];
 
-        $query = "DELETE FROM students WHERE studentID = $studentID";
+        $query = "DELETE FROM students WHERE studentID = '$studentID'";
         if(mysqli_query($dbc, $query)) echo "Student ID " . $studentID . " permanently dropped!";
 
         $query = "UPDATE classes SET totalStudents = totalStudents - 1 WHERE classID = $classID";
-        mysqli_query($dbc, $query);
-        
-        $query = "UPDATE global SET totalStudents = totalStudents - 1 WHERE unique_key = 1";
         mysqli_query($dbc, $query);
         
         mysqli_close($dbc);

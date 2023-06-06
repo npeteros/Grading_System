@@ -40,15 +40,14 @@
                 </thead>
                 <tbody>
                     <?php
-                        include('includes/mysqli_connect.php');
                         
-                        $query = "SELECT * FROM students WHERE studentClass = $id";
+                        $query = "SELECT * FROM students WHERE studentID = $id";
                         if($r = mysqli_query($dbc, $query)) {
                             while($row = mysqli_fetch_array($r)) {
                                 echo "<tr>
                                     <td>" . $row['studentID'] . "</td>
                                     <td>" . $row['studentName'] . "</td>
-                                    <td>" . $row['studentCourse'] . "</td>
+                                    <td>" . getCourse($row['courseID']) . "</td>
                                     <td>" . $row['midterms_grade'] . "</td>
                                     <td>" . $row['finals_grade'] . "</td>
                                 </tr>";

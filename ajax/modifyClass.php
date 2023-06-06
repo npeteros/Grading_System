@@ -5,11 +5,13 @@
         $id = $_POST['id'];
         $group = $_POST['group'];
         $course = $_POST['course'];
-        $schedule = $_POST['schedule'];
+        $s_time = $_POST['s_time'];
+        $e_time = $_POST['e_time'];
+        $sched = $_POST['sched'];
+        $room = $_POST['room'];
+        $campus = $_POST['campus'];
 
-        $totalStudents = 0;
-
-        $query = "UPDATE classes SET groupNumber = $group, courseCode = '$course', classSchedule = '$schedule' WHERE classID = $id";
+        $query = "UPDATE classes SET groupNumber = $group, courseCode = '$course', s_time = '$s_time', e_time = '$e_time', schedID = $sched, roomID = $room, campusID = $campus WHERE classID = $id";
         if(mysqli_query($dbc, $query)) echo "Class ID " . $id . " successfully modified!";        
        
         mysqli_close($dbc);

@@ -8,7 +8,7 @@
                 <input type="button" value="Add Class" class="option" id="addClass">
                 <input type="button" value="Dissolve Class" class="option" id="dissolveClass">
                 <input type="button" value="Modify Class" class="option" id="modifyClass">
-                <!-- <input type="button" value="Adjust Grading System" class="option" id="adjustGrading"> -->
+                <input type="button" value="Import Class" class="option" id="importClass">
             </div>
             <div id="output"></div>
 	    </fieldset>
@@ -33,11 +33,13 @@
                         $query = "SELECT * FROM classes";
                         if($r = mysqli_query($dbc, $query)) {
                             while($row = mysqli_fetch_array($r)) {
+                            
+                                $schedule = getSchedule($row['schedID']) . " " . formatTime($row['s_time']) . " - " . formatTime($row['e_time']) . " " . getClassroom($row['roomID']) . getCampus($row['campusID']) . " " . getCampus($row['campusID']);
                                 echo "<tr>
                                     <td>" . $row['classID'] . "</td>
                                     <td>" . $row['groupNumber'] . "</td>
                                     <td>" . $row['courseCode'] . "</td>
-                                    <td>" . $row['classSchedule'] . "</td>
+                                    <td>" . $schedule . "</td>
                                     <td>" . $row['totalStudents'] . "</td>
                                     <td><input type='button' value='View Class' class='action viewClass' id='viewClass' aria-label='" . $row['classID'] . "'></td>
                                 </tr>";

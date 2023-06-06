@@ -1,12 +1,12 @@
 <?php 
     include('includes/header.php');
-    if(!isset($_GET['id'])) header("Location: index.php"); 
+    if(!isset($_GET['id']) || (!is_numeric($_GET['id'])) || !isValidExamID($_GET['id'])) header("Location: index.php");
     $id = $_GET['id'];
     include('includes/mysqli_connect.php');
 
     $classID;
 
-    $query = "SELECT examClass FROM exams WHERE examID = $id";
+    $query = "SELECT examClass FROM exams WHERE examID = '$id'";
     if($r = mysqli_query($dbc, $query)) {
         if(mysqli_num_rows($r) > 0) {
             $row = mysqli_fetch_array($r);
@@ -46,20 +46,13 @@
 
                         $student_name = "";
                         
-                        $query = "SELECT * FROM exam_entries WHERE examID = $id";
+                        $query = "SELECT * FROM exam_entries WHERE examID = '$id'";
                         if($r = mysqli_query($dbc, $query)) {
+                            $rows = mysqli_num_rows($r);
                             while($row = mysqli_fetch_array($r)) {
-                                $student_id = $row['studentID'];
-                                $query = "SELECT studentName FROM students WHERE studentID = $student_id";
-                                if($res = mysqli_query($dbc, $query)) {
-                                    if(mysqli_num_rows($res) > 0) {
-                                        $result = mysqli_fetch_array($res);
-                                        $student_name = $result[0];
-                                    }
-                                }
                                 echo "<tr>
                                     <td>" . $row['resultID'] . "</td>
-                                    <td>" . $student_name . "</td>
+                                    <td>" . getStudent($row['studentID']) . "</td>
                                     <td>" . $row['score'] . "</td>
                                     <td>" . $row['status'] . "</td>
                                 </tr>";

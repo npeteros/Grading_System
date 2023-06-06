@@ -1,6 +1,6 @@
 <?php 
-    include('includes/header.php');
-    if(!isset($_GET['id'])) header("Location: index.php"); 
+    include('includes/header.php'); 
+    if(!isset($_GET['id']) || !isValidClassID($_GET['id'])) header("Location: index.php"); 
     $id = $_GET['id'];
     include('includes/mysqli_connect.php');
 ?>
@@ -26,7 +26,8 @@
                     <tr>
                         <th>Exam ID</th>
                         <th>Exam Name</th>
-                        <th>Exam Date</th>
+                        <th>Exam Start</th>
+                        <th>Exam End</th>
                         <th>Total Score</th>
                         <th>Passing Score</th>
                         <th>Term</th>
@@ -35,21 +36,25 @@
                 <tbody>
                     <?php
                         include('includes/mysqli_connect.php');
-                        
+                            
                         $query = "SELECT * FROM exams WHERE examClass = $id";
                         if($r = mysqli_query($dbc, $query)) {
-                            while($row = mysqli_fetch_array($r)) {
+                            //while($row = mysqli_fetch_array($r)) {
+                            for($i = 0; $i < mysqli_num_rows($r); $i++) {
+                                $row = mysqli_fetch_array($r);
                                 echo "<tr>
-                                    <td>" . $row['examID'] . "</td>
-                                    <td>" . $row['examName'] . "</td>
-                                    <td>" . $row['examDate'] . "</td>
-                                    <td>" . $row['totalScore'] . "</td>
-                                    <td>" . $row['passingScore'] . "</td>
-                                    <td>" . $row['term'] . "</td>
-                                    <td><input type='button' value='View Exam' class='action viewExam' id='viewExam' aria-label='" . $row['examID'] . "'></td>
-                                </tr>";
+                                        <td>" . $row['examID'] . "</td>
+                                        <td>" . $row['examName'] . "</td>
+                                        <td>" . formatDate($row['exam_s_Date']) . "</td>
+                                        <td>" . formatDate($row['exam_e_Date']) . "</td>
+                                        <td>" . $row['totalScore'] . "</td>
+                                        <td>" . $row['passingScore'] . "</td>
+                                        <td>" . $row['term'] . "</td>
+                                        <td><input type='button' value='View Exam' class='action viewExam' id='viewExam' aria-label='" . $row['examID'] . "'></td>
+                                    </tr>";
                             }
                         }
+                        
                     ?>
                 </tbody>
             </table>

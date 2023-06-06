@@ -10,10 +10,20 @@ const buttons = [
     ["#modifyExam", modifyExam],
     ["#addEntry", addEntry],
     ["#removeEntry", removeEntry],
-    ["#modifyEntry", modifyEntry]
+    ["#modifyEntry", modifyEntry],
+    ["#importClass", importClass]
 ];
 
-//const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+$(document).on("submit", "#import-class", function(e) {
+    e.preventDefault();
+    var formData = new FormData(this);
+    ajax_importClass(formData);
+});
+
+var classrooms = Array();
+var schedules = Array();
+var campuses = Array();
+var courses = Array();
 
 function addClass() {
     $("#output").text("");
@@ -21,15 +31,25 @@ function addClass() {
     $("#generatedForm").html("");
     var str = "";
     str += "<label for='group'>Group Number</label><input type='number' id='groupNum' class='new_forms' min=1 required>";
-    str += "<label for='code'>Course Code</label><input type='text' id='courseCode' class='new_forms' required>";
-    str += "<label for='sched'>Class Schedule:</label><input type='text' id='classSched' class='new_forms' placeholder='e.g.: T Th 07:30 AM - 10:00 AM LB446TC TC' required>";
-
-    // Text-based muna for now kay medj na mind-block ko sa checkboxes hehe
-    // for(var i = 0; i < days.length; ++i) {
-    //     str += "<label for='days'>" + days[i] + "</label>" + "<input type='checkbox' class='new_forms' id='name_" + i + "' value=" + days[i] + ">" + "<br />";
-    // }
-    // str += "<label for='time'>Select start time:</label><input type='time' class='new_forms' id='s_time' required>";
-    // str += "<label for='time'>Select end time:</label><input type='time' class='new_forms' id='e_time' required>";
+    str += "<label for='code'>Course Code</label><input type='text' id='courseCode' class='new_forms' maxlength='30' required>";
+    str += "<label for='s_time'>Start Time</label><input type='time' id='s_time' class='new_forms' required>";
+    str += "<label for='e_time'>End Time</label><input type='time' id='e_time' class='new_forms' required>";
+    str += "<label for='sched'>Schedule</label><select id='sched'>";
+    for(var i = 1; i < (schedules.length)+1; i++) {
+        str += "<option value=" + i + ">" + schedules[i-1] + "</option>";
+    }
+    str += "</select>"
+    str += "<label for='classroom'>Classroom</label><select id='room'>";
+    for(var i = 1; i < (classrooms.length)+1; i++) {
+        str += "<option value=" + i + ">" + classrooms[i-1] + "</option>";
+    }
+    str += "</select>";
+    str += "<label for='campus'>Campus</label><select id='campus'>";
+    for(var i = 1; i < (campuses.length)+1; i++) {
+        str += "<option value=" + i + ">" + campuses[i-1] + "</option>";
+    }
+    str += "</select>";
+    // str += "<label for='sched'>Class Schedule:</label><input type='text' id='classSched' class='new_forms' placeholder='e.g.: T Th 07:30 AM - 10:00 AM LB446TC TC' required>";
     str += "<input type='button' value='Add Class' class='option' id='confirmClass'>";
     str += "<input type='button' value='Go Back' class='option' onclick='location.reload();'>";
 
@@ -40,14 +60,22 @@ function addClass() {
 function ajax_addClass() {
     var group = $("#groupNum").val();
     var course = $("#courseCode").val();
-    var schedule = $("#classSched").val();
+    var s_time = $("#s_time").val();
+    var e_time = $("#e_time").val();
+    var sched = $("#sched").val();
+    var room = $("#room").val();
+    var campus = $("#campus").val();
     $.ajax({
         type: "POST",
         url: "ajax/addClass.php",
         data: {
             group: group,
             course: course,
-            schedule: schedule
+            s_time: s_time,
+            e_time: e_time,
+            sched: sched,
+            room: room,
+            campus: campus
         },
         success: function (response) {
             $("#output").text(response);
@@ -120,16 +148,25 @@ function confirmModifyClass() {
                 $("#btnList").hide();
                 $("#generatedForm").html("");
                 var str = "";
-                str += "<label for='group'>Group Number</label><input type='number' id='groupNum' class='new_forms' value='" + response[1] + "' min=1 required>";
-                str += "<label for='code'>Course Code</label><input type='text' id='courseCode' class='new_forms'value='" + response[2] + "' required>";
-                str += "<label for='sched'>Class Schedule:</label><input type='text' id='classSched' class='new_forms' value='" + response[3] + "'>";
-
-                // Text-based muna for now kay medj na mind-block ko sa checkboxes hehe
-                // for(var i = 0; i < days.length; ++i) {
-                //     str += "<label for='days'>" + days[i] + "</label>" + "<input type='checkbox' class='new_forms' id='name_" + i + "' value=" + days[i] + ">" + "<br />";
-                // }
-                // str += "<label for='time'>Select start time:</label><input type='time' class='new_forms' id='s_time' required>";
-                // str += "<label for='time'>Select end time:</label><input type='time' class='new_forms' id='e_time' required>";
+                str += "<label for='group'>Group Number</label><input type='number' id='groupNum' class='new_forms' min=1 required>";
+                str += "<label for='code'>Course Code</label><input type='text' id='courseCode' class='new_forms' maxlength='30' required>";
+                str += "<label for='s_time'>Start Time</label><input type='time' id='s_time' class='new_forms' required>";
+                str += "<label for='e_time'>End Time</label><input type='time' id='e_time' class='new_forms' required>";
+                str += "<label for='sched'>Schedule</label><select id='sched'>";
+                for(var i = 1; i < (schedules.length)+1; i++) {
+                    str += "<option value=" + i + ">" + schedules[i-1] + "</option>";
+                }
+                str += "</select>"
+                str += "<label for='classroom'>Classroom</label><select id='room'>";
+                for(var i = 1; i < (classrooms.length)+1; i++) {
+                    str += "<option value=" + i + ">" + classrooms[i-1] + "</option>";
+                }
+                str += "</select>";
+                str += "<label for='campus'>Campus</label><select id='campus'>";
+                for(var i = 1; i < (campuses.length)+1; i++) {
+                    str += "<option value=" + i + ">" + campuses[i-1] + "</option>";
+                }
+                str += "</select>";
                 str += "<input type='button' value='Save Changes' class='option' id='confirmModifyClass'>";
                 str += "<input type='button' value='Go Back' class='option' id='modifyReturn'>";
 
@@ -150,7 +187,11 @@ function confirmModifyClass() {
 function ajax_modifyClass(modifyID) {
     var group = $("#groupNum").val();
     var course = $("#courseCode").val();
-    var schedule = $("#classSched").val();
+    var s_time = $("#s_time").val();
+    var e_time = $("#e_time").val();
+    var sched = $("#sched").val();
+    var room = $("#room").val();
+    var campus = $("#campus").val();
     $.ajax({
         type: "POST",
         url: "ajax/modifyClass.php",
@@ -158,7 +199,11 @@ function ajax_modifyClass(modifyID) {
             id: modifyID,
             group: group,
             course: course,
-            schedule: schedule
+            s_time: s_time,
+            e_time: e_time,
+            sched: sched,
+            room: room,
+            campus: campus
         },
         success: function (response) {
             $("#output").text(response);
@@ -178,7 +223,12 @@ function addStudent() {
 
     var str = "";
     str += "<label for='name'>Student Name</label><input type='text' id='studentName' class='new_forms' required>";
-    str += "<label for='course'>Student Course</label><input type='text' id='studentCourse' class='new_forms' required>";
+    str += "<label for='id'>Student ID</label><input type='text' id='studentID' class='new_forms' required>";
+    str += "<label for='course'>Student Course</label><select id='course'>";
+    for(var i = 1; i < (courses.length)+1; i++) {
+        str += "<option value=" + i + ">" + courses[i-1] + "</option>";
+    }
+    str += "</select>";
     str += "<input type='button' value='Add Student' class='option' id='confirmStudent'>";
     str += "<input type='button' value='Go Back' class='option' onclick='location.reload();'>";
 
@@ -190,13 +240,15 @@ function addStudent() {
 
 function ajax_addStudent(classID) {
     var name = $("#studentName").val();
-    var course = $("#studentCourse").val();
+    var id = $("#studentID").val();
+    var course = $("#course").val();
     $.ajax({
         type: "POST",
         url: "ajax/addStudent.php",
         data: {
             classID: classID,
             name: name,
+            id: id,
             course: course
         },
         success: function (response) {
@@ -274,8 +326,12 @@ function confirmModifyStudent() {
                 $("#btnList").hide();
                 $("#generatedForm").html("");
                 var str = "";
-                str += "<label for='group'>Student Name</label><input type='text' id='studentName' class='new_forms' value='" + response[1] + "' required>";
-                str += "<label for='code'>Student Course</label><input type='text' id='studentCourse' class='new_forms'value='" + response[2] + "' required>";
+                str += "<label for='group'>Student Name</label><input type='text' id='studentName' class='new_forms' value='" + response['studentName'] + "' required>";
+                str += "<label for='course'>Student Course</label><select id='course'>";
+                for(var i = 1; i < (courses.length)+1; i++) {
+                    str += "<option value=" + i + ">" + courses[i-1] + "</option>";
+                }
+                str += "</select>";
                 str += "<input type='button' value='Save Changes' class='option' id='confirmModifyStudent'>";
                 str += "<input type='button' value='Go Back' class='option' id='modifyReturn'>";
 
@@ -294,12 +350,12 @@ function confirmModifyStudent() {
 
 function ajax_modifyStudent(modifyID) {
     var name = $("#studentName").val();
-    var course = $("#studentCourse").val();
+    var course = $("#course").val();
     $.ajax({
         type: "POST",
         url: "ajax/modifyStudent.php",
         data: {
-            id: modifyID,
+            mid: modifyID,
             name: name,
             course: course,
         },
@@ -321,7 +377,8 @@ function addExam() {
 
     var str = "";
     str += "<label for='name'>Exam Name</label><input type='text' id='examName' class='new_forms' required>";
-    str += "<label for='course'>Exam Date</label><input type='date' id='examDate' class='new_forms' required>";
+    str += "<label for='exam_s'>Exam Start</label><input type='datetime-local' id='exam_start' class='new_forms' required>";
+    str += "<label for='exam_e'>Exam End</label><input type='datetime-local' id='exam_end' class='new_forms' required>";
     str += "<label for='name'>Total Score</label><input type='number' id='totalScore' class='new_forms' min=0 required>";
     str += "<label for='name'>Passing Score</label><input type='number' id='passingScore' class='new_forms' min=0 required>";
     str += "<label for='term'>Assigned Term</label><select id='term'><option value='Midterms'>Midterms</option><option value='Finals'>Finals</option></select>";
@@ -337,7 +394,8 @@ function addExam() {
 function ajax_addExam(classID) {
 
     var name = $("#examName").val();
-    var date = $("#examDate").val();
+    var start = $("#exam_start").val();
+    var end = $("#exam_end").val();
     var t_score = $("#totalScore").val();
     var p_score = $("#passingScore").val();
     var term = $("#term").val();
@@ -348,7 +406,8 @@ function ajax_addExam(classID) {
         data: {
             classID: classID,
             name: name,
-            date: date,
+            start: start,
+            end: end,
             t_score: t_score,
             p_score: p_score,
             term: term
@@ -426,10 +485,11 @@ function confirmModifyExam() {
                 $("#btnList").hide();
                 $("#generatedForm").html("");
                 var str = "";
-                str += "<label for='group'>Exam Name</label><input type='text' id='examName' class='new_forms' value='" + response[2] + "' min=1 required>";
-                str += "<label for='code'>Exam Date</label><input type='date' id='examDate' class='new_forms'value='" + response[3] + "' required>";
-                str += "<label for='sched'>Total Score:</label><input type='number' id='totalScore' class='new_forms' value='" + response[4] + "'>";
-                str += "<label for='sched'>Passing Score:</label><input type='number' id='passingScore' class='new_forms' value='" + response[5] + "'>";
+                str += "<label for='group'>Exam Name</label><input type='text' id='examName' class='new_forms' value='" + response['examName'] + "' min=1 required>";
+                str += "<label for='code'>Exam Start</label><input type='datetime-local' id='exam_start' class='new_forms'value='" + response['exam_s_date'] + "' required>";
+                str += "<label for='exam_e'>Exam End</label><inpuit type='datetime-local' id='exam_end' class='new_forms' value='" + response['exam_e_date'] + "' required>";
+                str += "<label for='sched'>Total Score:</label><input type='number' id='totalScore' class='new_forms' value='" + response['totalScore'] + "'>";
+                str += "<label for='sched'>Passing Score:</label><input type='number' id='passingScore' class='new_forms' value='" + response['passingScore'] + "'>";
                 str += "<label for='term'>Assigned Term</label><select id='term'><option value='Midterms'>Midterms</option><option value='Finals'>Finals</option></select>";
                 str += "<input type='button' value='Save Changes' class='option' id='confirmModifyExam'>";
                 str += "<input type='button' value='Go Back' class='option' id='modifyReturn'>";
@@ -450,7 +510,8 @@ function confirmModifyExam() {
 
 function ajax_modifyExam(modifyID) {
     var name = $("#examName").val();
-    var date = $("#examDate").val();
+    var start = $("#exam_start").val();
+    var end = $("#exam_end").val();
     var t_score = $("#totalScore").val();
     var p_score = $("#passingScore").val();
     var term = $("#term").val();
@@ -461,7 +522,8 @@ function ajax_modifyExam(modifyID) {
         data: {
             id: modifyID,
             name: name,
-            date: date,
+            start: start,
+            end: end,
             t_score: t_score,
             p_score: p_score,
             term: term
@@ -581,8 +643,8 @@ function confirmModifyEntry() {
                 $("#btnList").hide();
                 $("#generatedForm").html("");
                 var str = "";
-                str += "<label for='group'>Student ID</label><input type='number' id='studentID' class='new_forms' value='" + response[3] + "' min=1 required>";
-                str += "<label for='code'>Student's Score</label><input type='number' id='studentScore' class='new_forms'value='" + response[4] + "' required>";
+                str += "<label for='group'>Student ID</label><input type='number' id='studentID' class='new_forms' value='" + response['studentID'] + "' min=1 required>";
+                str += "<label for='code'>Student's Score</label><input type='number' id='studentScore' class='new_forms'value='" + response['score'] + "' required>";
                 str += "<input type='button' value='Save Changes' class='option' id='confirmModifyEntry'>";
                 str += "<input type='button' value='Go Back' class='option' id='modifyReturn'>";
 
@@ -622,17 +684,88 @@ function ajax_modifyEntry(modifyID) {
     });
 }
 
+function importClass() {
+    $("#output").text("");
+    $("#btnList").hide();
+    $("#generatedForm").html("");
+
+    var str = "";
+    str += "<form method='post' id='import-class' enctype='multipart/form-data'>";
+    str += "<input type='hidden' name='MAX_FILE_SIZE' value='300000'>";
+    str += "<input type='file' name='upload' id='upload' required>";
+    str += "<input type='submit' value='Import Class' class='option' id='importClass'>";
+    str += "<input type='button' value='Go Back' class='option' onclick='location.reload();'>";
+    str += "</form>";
+
+    $("#generatedForm").prepend(str);
+}
+
+function ajax_importClass(formData) {
+    $.ajax({
+        type: "POST",
+        url: "ajax/importClass.php",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+            $("#output").text(response);
+            setTimeout(function() { location.reload(); }, 2000);
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+        }
+    });
+}
+
 function setActivityHeaders() {
     $.ajax({
         type: "GET",
         url: "ajax/retrieveHeaders.php",
         dataType: "json",
         success: function(response){
-            $("#g_classes").text(response[1]);
-            $("#g_students").text(response[2]);
+            $("#g_classes").text(response[0]);
+            $("#g_students").text(response[1]);
         },
         error: function(xhr, status, error) {
             console.error("Error updating row: " + error);
+        }
+    });
+}
+
+function initGlobalArrays() {
+    $.ajax({
+        type: "GET",
+        url: "ajax/retrieveClassrooms.php",
+        dataType: "json",
+        success: function (response) {
+            classrooms = response;
+        }
+    });
+    
+    $.ajax({
+        type: "GET",
+        url: "ajax/retrieveSchedules.php",
+        dataType: "json",
+        success: function (response) {
+            schedules = response;
+        }
+    });
+
+    $.ajax({
+        type: "GET",
+        url: "ajax/retrieveCampuses.php",
+        dataType: "json",
+        success: function (response) {
+            campuses = response;
+        }
+    });
+
+    $.ajax({
+        type: "GET",
+        url: "ajax/retrieveCourses.php",
+        dataType: "json",
+        success: function (response) {
+            courses = response;
         }
     });
 }
@@ -661,4 +794,5 @@ $(function() {
     })
     
     setActivityHeaders();
+    initGlobalArrays();
 });

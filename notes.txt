@@ -1,0 +1,58 @@
+List of Possible Class Schedules
+
+MW
+MWF
+Tue
+TTh
+Fri
+Sat
+Sun
+
+Other inputs
+
+[DONE]
+Start Hour (Select type 1 - 12)
+Start Minute (Select type 0 - 59)
+End Hour (Select type 1 - 12)
+End Minute (Select type 0 - 59)
+Meridiem (AM / PM) [For both Start and End]
+Class Room (Building, Room Number, Campus)
+Start and End time for exams (include Meridiem)
+
+[DONE]
+Separate Table for Courses 
+
+[TO-DO]
+File input from Bootstrap
+- PHP Validation for specific files
+- App would upload either CSV or PDF
+- Converts the data from the document and uploads it to table in database with the same number of columns
+
+[DONE]
+Student ID and ID Number separate
+- ID Number (unique) should not be the same
+
+[TO-DO]
+Accepts the criteria of the teacher (such as class participation, performance)
+- Mandatory criteria (exams, assignments, quizzes, attendance, activities/projects)
+- Percentage of each criteria which has to equivalent to more than 100%
+- As soon as the criteria is received, ask the scores of the criteria
+
+30/60
+((30/60) * 100)
+((score/total) * 100%)
+= 50%
+50/80
+= 62.5%
+20/50
+= 40%
+
+50 + 62.5 + 40 / 3
+50.83%
+
+criteria_0 + ... criteria_n = total / n
+
+[DONE]
+Bugs
+- is_numeric for view_exam.php
+- GET url variable to check for valid exams
